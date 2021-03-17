@@ -1,0 +1,88 @@
+﻿
+version: 0.2
+env:
+  shell: /bin/bash
+  variables:
+    USE_EPOCH: 1
+    PUBLIC_REGISTRY: public.ecr.aws/ews-network
+    DOCKER_CLI_EXPERIMENTAL: enabled
+
+batch:
+  fast-fail: false
+  build-graph:
+    - identifier: amd64_8
+      env:
+        compute-type: BUILD_GENERAL1_LARGE
+        privileged-mode: true
+        variables:
+          VERSION: 8
+          ARCH: amd64
+      buildspec: build_images.yml
+
+    - identifier: amd64_11
+      env:
+        compute-type: BUILD_GENERAL1_LARGE
+        privileged-mode: true
+        variables:
+          VERSION: 11
+          ARCH: amd64
+      buildspec: build_images.yml
+
+    - identifier: amd64_15
+      env:
+        compute-type: BUILD_GENERAL1_LARGE
+        privileged-mode: true
+        variables:
+          VERSION: 15
+          ARCH: amd64
+      buildspec: build_images.yml
+
+
+    - identifier: manifest
+      env:
+        compute-type: BUILD_GENERAL1_LARGE
+        privileged-mode: true
+      depend-on:
+        - amd64_py37
+        - arm64v8_py37
+        - amd64_py38
+        - arm64v8_py38
+
+phases:
+  install:
+    commands:
+      - if [ -z ${AWS_ACCOUNT_ID+x} ]; then AWS_ACCOUNT_ID=$(aws sts get-caller-identity | jq -r .Account); fi
+      - REGISTRY_URI=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION:-$AWS_DEFAULT_REGION}.amazonaws.com/
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin ${REGISTRY_URI}
+      - aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${PUBLIC_REGISTRY}
+      - if ! [ -z ${CODEBUILD_RESOLVED_SOURCE_VERSION+x} ]; then COMMIT_HASH=${CODEBUILD_RESOLVED_SOURCE_VERSION::7}; fi
+      - EPOCH=`date +'%Y%m%d'`
+      - SUFFIX=${COMMIT_HASH:=$EPOCH}
+      - if [ $USE_EPOCH -eq 1 ]; then SUFFIX=$EPOCH; fi
+
+  build:
+    commands:
+      - |
+          for VERSION in 8 11 15; do
+            for ARCH in "amd64" ; do
+              TAG=${VERSION}.${SUFFIX}-${ARCH}
+
+              echo Publish from ${REGISTRY_URI}amazoncorretto:${TAG}$ to ${PUBLIC_REGISTRY}/amazoncorretto:${TAG}$
+              docker pull ${REGISTRY_URI}amazoncorretto:${TAG}
+              docker tag  ${REGISTRY_URI}amazoncorretto:${TAG} ${PUBLIC_REGISTRY}/amazoncorretto:${TAG}
+              docker push ${PUBLIC_REGISTRY}/amazoncorretto:${TAG}
+            done
+
+            docker manifest create ${PUBLIC_REGISTRY}/amazoncorretto:${VERSION}.${SUFFIX}       \
+              --amend ${PUBLIC_REGISTRY}/amazoncorretto:${VERSION}.${SUFFIX}-amd64              \
+              --amend ${PUBLIC_REGISTRY}/amazoncorretto:${VERSION}.${SUFFIX}-arm64v8
+            docker manifest push ${PUBLIC_REGISTRY}/amazoncorretto:${VERSION}.${SUFFIX}
+
+            docker manifest create ${PUBLIC_REGISTRY}/amazoncorretto:${VERSION}                 \
+              --amend ${PUBLIC_REGISTRY}/amazoncorretto:${VERSION}.${SUFFIX}-amd64              \
+              --amend ${PUBLIC_REGISTRY}/amazoncorretto:${VERSION}.${SUFFIX}-arm64v8
+            docker manifest push ${PUBLIC_REGISTRY}/amazoncorretto:${VERSION}
+
+          done
+    finally:
+      - rm -rfv ~/.docker

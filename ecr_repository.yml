@@ -1,0 +1,19 @@
+---
+# THIS TEMPLATE IS AIMED TO BE A PRODUCT. TREAT CAREFULLY
+
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >-
+  Standardized template to create an ECR Repository in a shared/management account.
+
+Parameters:
+  RepositoryName:
+    Type: String
+    AllowedPattern: '[\x20-\x7E]+'
+
+Resources:
+  Repository:
+    Type: AWS::ECR::Repository
+    Properties:
+      ImageScanningConfiguration:
+        scanOnPush: True
+      RepositoryName: !Ref 'RepositoryName'
