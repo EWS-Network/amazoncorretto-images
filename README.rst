@@ -1,13 +1,13 @@
-==============
-docker-python
-==============
+=======================
+docker-amazoncorretto
+========================
 
 This repository is used to build Docker images from Amazon Linux 2 and install python run time.
 The images are build for multiple architecture automatically.
 
 Refer to `AWS Public ECR repository`_ to find all the published images to date.
 
-.. _AWS Public ECR Repository: https://gallery.ecr.aws/i9v7p2w3/python
+.. _AWS Public ECR Repository: https://gallery.ecr.aws/ews-network/amazoncorretto
 
 
 

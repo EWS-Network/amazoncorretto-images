@@ -4,48 +4,9 @@ env:
   shell: /bin/bash
   variables:
     USE_EPOCH: 1
-    PUBLIC_REGISTRY: public.ecr.aws/ews-network
+    PUBLIC_REGISTRY: public.ecr.aws/ews-network/
+    RUNTIME_NAME: amazoncorretto
     DOCKER_CLI_EXPERIMENTAL: enabled
-
-batch:
-  fast-fail: false
-  build-graph:
-    - identifier: amd64_8
-      env:
-        compute-type: BUILD_GENERAL1_LARGE
-        privileged-mode: true
-        variables:
-          VERSION: 8
-          ARCH: amd64
-      buildspec: build_images.yml
-
-    - identifier: amd64_11
-      env:
-        compute-type: BUILD_GENERAL1_LARGE
-        privileged-mode: true
-        variables:
-          VERSION: 11
-          ARCH: amd64
-      buildspec: build_images.yml
-
-    - identifier: amd64_15
-      env:
-        compute-type: BUILD_GENERAL1_LARGE
-        privileged-mode: true
-        variables:
-          VERSION: 15
-          ARCH: amd64
-      buildspec: build_images.yml
-
-
-    - identifier: manifest
-      env:
-        compute-type: BUILD_GENERAL1_LARGE
-        privileged-mode: true
-      depend-on:
-        - amd64_8
-        - amd64_11
-        - amd64_15
 
 phases:
   install:
@@ -61,21 +22,15 @@ phases:
 
   build:
     commands:
+      - REGISTRY_URL=${PUBLIC_REGISTRY}
+      - docker-compose build
+      - docker-compose push
       - |
-          for VERSION in 8 11 15; do
-            for ARCH in "amd64" ; do
-              TAG=${VERSION}.${SUFFIX}-${ARCH}
-
-              echo Publish from ${REGISTRY_URI}amazoncorretto:${TAG}$ to ${PUBLIC_REGISTRY}/amazoncorretto:${TAG}
-              docker pull ${REGISTRY_URI}amazoncorretto:${TAG}
-              docker tag  ${REGISTRY_URI}amazoncorretto:${TAG} ${PUBLIC_REGISTRY}/amazoncorretto:${TAG}
-              docker push ${PUBLIC_REGISTRY}/amazoncorretto:${TAG}
-            done
-
-            docker manifest create ${PUBLIC_REGISTRY}/amazoncorretto:${VERSION}         \
-              --amend ${PUBLIC_REGISTRY}/amazoncorretto:${VERSION}.${SUFFIX}-amd64      ;\
-            docker manifest push ${PUBLIC_REGISTRY}/amazoncorretto:${VERSION}
-
+          for VERSION in  8 15 11; do
+            ARCH=amd64
+            docker manifest  create ${PUBLIC_REGISTRY}${RUNTIME_NAME}:${VERSION} \
+              --amend ${PUBLIC_REGISTRY}${RUNTIME_NAME}:${VERSION}.amzn2${ARCH:+-$ARCH}
+            docker manifest push ${PUBLIC_REGISTRY}${RUNTIME_NAME}:${VERSION}
           done
     finally:
       - rm -rfv ~/.docker
