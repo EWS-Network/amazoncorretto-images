@@ -151,16 +151,16 @@ Resources:
       BadgeEnabled: True
       Artifacts:
         Type: NO_ARTIFACTS
-      BuildBatchConfig:
-        CombineArtifacts: False
-        Restrictions:
-          ComputeTypesAllowed:
-            - BUILD_GENERAL1_SMALL
-            - BUILD_GENERAL1_MEDIUM
-            - BUILD_GENERAL1_LARGE
-          MaximumBuildsAllowed: 10
-        ServiceRole: !GetAtt 'CodeBuildRole.Arn'
-        TimeoutInMins: 60
+      # BuildBatchConfig:
+      #   CombineArtifacts: False
+      #   Restrictions:
+      #     ComputeTypesAllowed:
+      #       - BUILD_GENERAL1_SMALL
+      #       - BUILD_GENERAL1_MEDIUM
+      #       - BUILD_GENERAL1_LARGE
+      #     MaximumBuildsAllowed: 10
+      #   ServiceRole: !GetAtt 'CodeBuildRole.Arn'
+      #   TimeoutInMins: 60
       Environment:
         EnvironmentVariables:
           - Name: PUBLIC_REGISTRY
@@ -180,7 +180,7 @@ Resources:
         BuildSpec: !Ref DockerBuildspecFile
       Triggers:
         Webhook: True
-        BuildType: BUILD_BATCH
+        # BuildType: BUILD_BATCH
         FilterGroups:
           - - Type: EVENT
               Pattern: "PULL_REQUEST_MERGED"

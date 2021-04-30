@@ -1,10 +1,12 @@
-﻿
+﻿---
+# Buildspec for amazoncorretto images
+
 version: 0.2
 env:
   shell: /bin/bash
   variables:
     USE_EPOCH: 1
-    PUBLIC_REGISTRY: public.ecr.aws/ews-network/
+    PUBLIC_REGISTRY: public.ecr.aws/johnpreston/
     RUNTIME_NAME: amazoncorretto
     DOCKER_CLI_EXPERIMENTAL: enabled
 
