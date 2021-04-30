@@ -1,5 +1,5 @@
 ﻿ARG ARCH=
-ARG BASE_TAG=2.0.20210219.0
+ARG BASE_TAG=2
 ARG BASE_IMAGE=public.ecr.aws/amazonlinux/amazonlinux:${BASE_TAG}${ARCH}
 
 FROM $BASE_IMAGE

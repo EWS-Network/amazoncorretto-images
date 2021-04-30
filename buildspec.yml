@@ -6,7 +6,7 @@ env:
   shell: /bin/bash
   variables:
     USE_EPOCH: 1
-    PUBLIC_REGISTRY: public.ecr.aws/ews-network
+    PUBLIC_REGISTRY: public.ecr.aws/ews-network/
     RUNTIME_NAME: amazoncorretto
     DOCKER_CLI_EXPERIMENTAL: enabled
 
