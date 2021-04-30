@@ -34,5 +34,15 @@ phases:
               --amend ${PUBLIC_REGISTRY}${RUNTIME_NAME}:${VERSION}.amzn2${ARCH:+-$ARCH}
             docker manifest push ${PUBLIC_REGISTRY}${RUNTIME_NAME}:${VERSION}
           done
+  post_build:
+    commands:
+      - ATTEMPTS=0
+      - |
+          until [ "${ATTEMPTS}" -ge 5 ]; do
+            docker-compose -f alpine.yaml build && docker-compose -f alpine.yaml push && break
+            echo Attempt ${ATTEMPTS}
+            ATTEMPTS=$((ATTEMPTS+1))
+            sleep 15
+          done
     finally:
       - rm -rfv ~/.docker

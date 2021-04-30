@@ -19,21 +19,3 @@ services:
       context: .
       dockerfile: amzn2/15.amzn2.Dockerfile
     image: ${REGISTRY_URL}amazoncorretto:15.amzn2-${ARCH:-amd64}
-
-  alpine-corretto-8:
-    build:
-      context: .
-      dockerfile: alpine/8.alpine.Dockerfile
-    image: ${REGISTRY_URL}amazoncorretto:8.alpine-${ARCH:-amd64}
-
-  alpine-corretto-11:
-    build:
-      context: .
-      dockerfile: alpine/11.alpine.Dockerfile
-    image: ${REGISTRY_URL}amazoncorretto:11.alpine-${ARCH:-amd64}
-
-  alpine-corretto-15:
-    build:
-      context: .
-      dockerfile: alpine/15.alpine.Dockerfile
-    image: ${REGISTRY_URL}amazoncorretto:15.alpine-${ARCH:-amd64}
