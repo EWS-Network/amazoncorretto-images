@@ -8,6 +8,6 @@ RUN echo "https://apk.corretto.aws/" >> /etc/apk/repositories ; apk update; apk 
 
 MAINTAINER john@ews-network.net
 LABEL runtime=amazoncorretto
-LABEL version=11
+LABEL version=15
 
-CMD ["java"]
+ENTRYPOINT ["java"]
