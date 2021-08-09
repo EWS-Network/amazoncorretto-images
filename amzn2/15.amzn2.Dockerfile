@@ -27,4 +27,4 @@ RUN keytool -importcert -file /etc/ssl/certs/rds-combined-ca-bundle.pem \
 LABEL runtime=amazoncorretto
 LABEL version=15
 
-ENTRYPOINT ["java"]
+CMD ["java"]
