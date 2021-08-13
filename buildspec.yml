@@ -28,7 +28,7 @@ phases:
       - docker-compose build
       - docker-compose push
       - |
-          for VERSION in  8 15 11; do
+          for VERSION in  8 15 16 11; do
             ARCH=amd64
             docker manifest  create ${PUBLIC_REGISTRY}${RUNTIME_NAME}:${VERSION} \
               --amend ${PUBLIC_REGISTRY}${RUNTIME_NAME}:${VERSION}.amzn2${ARCH:+-$ARCH}
