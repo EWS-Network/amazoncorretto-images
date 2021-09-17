@@ -25,3 +25,9 @@ services:
       context: .
       dockerfile: amzn2/16.amzn2.Dockerfile
     image: ${REGISTRY_URL}amazoncorretto:16.amzn2-${ARCH:-amd64}
+
+  amzn2-corretto-17:
+    build:
+      context: .
+      dockerfile: amzn2/17.amzn2.Dockerfile
+    image: ${REGISTRY_URL}amazoncorretto:17.amzn2-${ARCH:-amd64}

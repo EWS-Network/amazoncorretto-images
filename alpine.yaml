@@ -23,3 +23,9 @@ services:
       context: .
       dockerfile: alpine/16.alpine.Dockerfile
     image: ${REGISTRY_URL}amazoncorretto:16.alpine-${ARCH:-amd64}
+
+  alpine-corretto-17:
+    build:
+      context: .
+      dockerfile: alpine/17.alpine.Dockerfile
+    image: ${REGISTRY_URL}amazoncorretto:17.alpine-${ARCH:-amd64}
