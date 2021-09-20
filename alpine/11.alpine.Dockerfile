@@ -10,5 +10,5 @@ MAINTAINER john@ews-network.net
 LABEL runtime=amazoncorretto
 LABEL version=11
 
-ENTRYPOINT ["java"]
+CMD ["java"]
 

@@ -8,7 +8,6 @@ RUN yum install openssl -y;\
      openssl x509 -outform der -in /etc/ssl/certs/rds-combined-ca-bundle.pem \
      -out /etc/ssl/certs/rds-combined-ca-bundle.der
 
-
 FROM $BASE_IMAGE
 
 RUN yum upgrade -y;\
